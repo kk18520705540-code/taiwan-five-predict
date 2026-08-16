@@ -7,33 +7,33 @@
 <title>台湾5分彩 峰值分析</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);color:#e0e0e0;min-height:100vh;padding:10px;font-size:14px}
-.container{max-width:480px;margin:0 auto}
-.header{text-align:center;border-bottom:2px solid #e94560;padding-bottom:12px;margin-bottom:12px}
-.header h1{color:#e94560;font-size:18px;margin:0}
-.header .subtitle{color:#888;font-size:11px;margin-top:4px}
-.current-issue{background:rgba(233,69,96,0.1);border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center}
-.current-issue .issue-info{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:8px}
-.numbers-row{display:flex;justify-content:center;gap:8px}
-.number-ball{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e94560,#c73e54);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;color:white;box-shadow:0 2px 8px rgba(233,69,96,0.4)}
-.prediction-box{background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.3);border-radius:12px;padding:12px;margin-bottom:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);颜色:#e0e0e0;最小高度:100视口高度;内边距:10像素;字体大小:14像素}
+.容器{最大宽度:480像素;外边距:0 自动}
+.标题{文本对齐:居中;下边框:2像素 实线 #e94560;底部内边距:12像素;底部外边距:12像素}
+.标题 h1{颜色:#e94560;字体大小:18px;外边距:0}
+.标题 .副标题{颜色:#888;字体大小:11px;上边距:4px}
+.当前问题{背景:rgba(233,69,96,0.1);边框:1px 实线 rgba(233,69,96,0.3);圆角半径:12px;内边距:12px;下边距:12px;文本对齐:居中}
+.当前问题 .问题信息{颜色:#e94560;字体粗细:加粗;字体大小:12px;底部间距:8px}
+.数字行{显示:弹性布局;对齐内容:居中;间距:8像素}
+.数字球{宽度:36px;高度:36px;边框半径:50%;背景:线性渐变(135度,#e94560,#c73e54);显示:弹性布局;对齐方式:居中;justify-content:居中;字体粗细:加粗;字体大小:16px;颜色:白色;box-shadow:0 2px 8px rgba(233,69,96,0.4)}
+.预测框{背景:rgba(78,205,196,0.08);边框:1px 实线 rgba(78,205,196,0.3);圆角半径:12px;内边距:12px;下外边距:12px}
 .prediction-box .pred-title{color:#ffe66d;font-weight:bold;font-size:13px;text-align:center;margin-bottom:10px}
 .pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pred-item{background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center;border:1px solid #333}
 .pred-item .pos-name{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:6px}
 .pred-nums{display:flex;justify-content:center;gap:4px;margin:6px 0}
-.pred-ball{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold}
-.pred-ball.best{background:linear-gradient(135deg,#4ecdc4,#2a9d8f);border:2px solid #ffe66d;color:#0f0f1a}
-.pred-ball.worst{background:linear-gradient(135deg,#e94560,#c73e54);border:2px solid #ff6b6b;color:white}
-.pred-ball.normal{background:#333;border:1px solid #555;color:#e0e0e0}
+.pred-ball{宽度:28px;高度:28px;圆角半径:50%;显示方式:弹性布局;对齐方式:居中;justify-content:居中;字体大小:13px;字体粗细:加粗}
+.预测球.最佳{背景:线性渐变(135度,#4ecdc4,#2a9d8f);边框:2像素 实线 #ffe66d;颜色:#0f0f1a}
+.最差背景:线性渐变(度,#e94560,#c73e54);边框:2像素 实线 #ff6b6b;颜色:白色}
+.pred-ball.正常{背景:#333;边框:1px 实线 #555;颜色:#e0e0e0}
 .pred-item .pred-meta{font-size:10px;color:#888;margin-top:4px}
-.tabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.选项卡{显示:弹性布局;间距:5像素;底部外边距:10像素;换行:自动}
 .tab{flex:1;min-width:50px;padding:8px;background:rgba(255,255,255,0.05);border:1px solid #333;border-radius:8px;text-align:center;font-size:12px;font-weight:bold;color:#e0e0e0;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .tab.active{background:linear-gradient(135deg,#e94560,#c73e54);border-color:#e94560;color:white}
-.panel{display:none}
-.panel.active{display:block}
-.scheme-card{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;margin-bottom:8px;border-left:3px solid}
-.scheme-card .scheme-title{font-size:12px;font-weight:bold;margin-bottom:6px}
+.面板{display:none}
+.面板.active{display:block}
+.方案卡片{背景:rgba(0,0,0,0.2);圆角:10px;内边距:10px;下边距:8px;左 border:3px 实线}
+.方案卡片 .方案标题{字体大小:12px;字体粗细:加粗;底部间距:6px}
 .scheme-nums{display:flex;gap:5px;margin:5px 0;align-items:center;flex-wrap:wrap}
 .scheme-nums span{color:#888;font-size:10px;margin-right:4px;flex-shrink:0}
 .s-ball{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0}
