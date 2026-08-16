@@ -628,8 +628,8 @@ loadData();
 document.addEventListener('visibilitychange', function() {
     if (!document.hidden) { countdownSec = 15; loadData(); }
 });
-<script>
-<!-- 复盘统计面板 - 内嵌版 -->
+</script>
+<!-- 复盘统计面板 -->
 <div id="review-panel-root"></div>
 <script>
 (function() {
@@ -638,7 +638,6 @@ document.addEventListener('visibilitychange', function() {
     var snf = ['🔥 熱號追蹤', '❄️ 冷號回補', '📈 趨勢跟隨', '⚖️ 奇偶平衡', '🎯 綜合評分'];
     
     function fetchReview() {
-        // 同时尝试多个路径，确保能读到 review.json
         var urls = [
             './review.json?t=' + Date.now(),
             '/review.json?t=' + Date.now(),
@@ -647,8 +646,8 @@ document.addEventListener('visibilitychange', function() {
         
         function tryFetch(idx) {
             if (idx >= urls.length) {
-                document.getElementById('review-panel-root').innerHTML = 
-                    '<div style="text-align:center;color:#888;padding:20px;">⚠️ 无法加载复盘数据，请确认 review.json 已推送</div>';
+                var el = document.getElementById('review-panel-root');
+                if (el) el.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">⚠️ 无法加载复盘数据，请确认 review.json 已推送</div>';
                 return;
             }
             fetch(urls[idx], { cache: 'no-store' })
@@ -689,7 +688,6 @@ document.addEventListener('visibilitychange', function() {
             }
             html += '</div>';
             
-            // 综合峰值复盘
             html += '<div style="background:rgba(78,205,196,0.05);border:1px solid rgba(78,205,196,0.2);border-radius:10px;padding:10px;margin-bottom:10px;">';
             html += '<div style="color:#4ecdc4;font-weight:bold;font-size:11px;margin-bottom:6px;text-align:center;">🔮 綜合峰值復盤</div>';
             html += '<div style="display:flex;justify-content:center;gap:12px;text-align:center;">';
@@ -700,7 +698,6 @@ document.addEventListener('visibilitychange', function() {
             html += '<div style="font-size:9px;color:#aaa;text-align:center;margin-top:4px;">連中' + d.composite.mhs + ' | 連非' + d.composite.mms + '</div>';
             html += '</div>';
             
-            // 推荐 + 排除复盘
             html += '<div style="display:flex;gap:6px;margin-bottom:10px;">';
             html += '<div style="flex:1;background:rgba(78,205,196,0.05);border:1px solid rgba(78,205,196,0.2);border-radius:8px;padding:8px;text-align:center;">';
             html += '<div style="color:#4ecdc4;font-weight:bold;font-size:10px;margin-bottom:4px;">✅ 推薦5碼復盤</div>';
@@ -720,7 +717,6 @@ document.addEventListener('visibilitychange', function() {
             html += '</div>';
             html += '</div>';
             
-            // 五方案复盘
             html += '<div style="color:#aaa;font-weight:bold;font-size:11px;margin-bottom:6px;border-top:1px solid #333;padding-top:8px;text-align:center;">🎲 五方案復盤對比</div>';
             for (var s = 0; s < 5; s++) {
                 var ds = d.schemes[s];
