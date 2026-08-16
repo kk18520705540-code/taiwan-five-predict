@@ -7,33 +7,33 @@
 <title>台湾5分彩 峰值分析</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);颜色:#e0e0e0;最小高度:100视口高度;内边距:10像素;字体大小:14像素}
-.容器{最大宽度:480像素;外边距:0 自动}
-.标题{文本对齐:居中;下边框:2像素 实线 #e94560;底部内边距:12像素;底部外边距:12像素}
-.标题 h1{颜色:#e94560;字体大小:18px;外边距:0}
-.标题 .副标题{颜色:#888;字体大小:11px;上边距:4px}
-.当前问题{背景:rgba(233,69,96,0.1);边框:1px 实线 rgba(233,69,96,0.3);圆角半径:12px;内边距:12px;下边距:12px;文本对齐:居中}
-.当前问题 .问题信息{颜色:#e94560;字体粗细:加粗;字体大小:12px;底部间距:8px}
-.数字行{显示:弹性布局;对齐内容:居中;间距:8像素}
-.数字球{宽度:36px;高度:36px;边框半径:50%;背景:线性渐变(135度,#e94560,#c73e54);显示:弹性布局;对齐方式:居中;justify-content:居中;字体粗细:加粗;字体大小:16px;颜色:白色;box-shadow:0 2px 8px rgba(233,69,96,0.4)}
-.预测框{背景:rgba(78,205,196,0.08);边框:1px 实线 rgba(78,205,196,0.3);圆角半径:12px;内边距:12px;下外边距:12px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);color:#e0e0e0;min-height:100vh;padding:10px;font-size:14px}
+.container{max-width:480px;margin:0 auto}
+.header{text-align:center;border-bottom:2px solid #e94560;padding-bottom:12px;margin-bottom:12px}
+.header h1{color:#e94560;font-size:18px;margin:0}
+.header .subtitle{color:#888;font-size:11px;margin-top:4px}
+.current-issue{background:rgba(233,69,96,0.1);border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center}
+.current-issue .issue-info{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:8px}
+.numbers-row{display:flex;justify-content:center;gap:8px}
+.number-ball{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e94560,#c73e54);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;color:white;box-shadow:0 2px 8px rgba(233,69,96,0.4)}
+.prediction-box{background:rgba(78,205,196,0.08);border:1px solid rgba(78,205,196,0.3);border-radius:12px;padding:12px;margin-bottom:12px}
 .prediction-box .pred-title{color:#ffe66d;font-weight:bold;font-size:13px;text-align:center;margin-bottom:10px}
 .pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .pred-item{background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center;border:1px solid #333}
 .pred-item .pos-name{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:6px}
 .pred-nums{display:flex;justify-content:center;gap:4px;margin:6px 0}
-.pred-ball{宽度:28px;高度:28px;圆角半径:50%;显示方式:弹性布局;对齐方式:居中;justify-content:居中;字体大小:13px;字体粗细:加粗}
-.预测球.最佳{背景:线性渐变(135度,#4ecdc4,#2a9d8f);边框:2像素 实线 #ffe66d;颜色:#0f0f1a}
-.最差背景:线性渐变(度,#e94560,#c73e54);边框:2像素 实线 #ff6b6b;颜色:白色}
-.pred-ball.正常{背景:#333;边框:1px 实线 #555;颜色:#e0e0e0}
+.pred-ball{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold}
+.pred-ball.best{background:linear-gradient(135deg,#4ecdc4,#2a9d8f);border:2px solid #ffe66d;color:#0f0f1a}
+.pred-ball.worst{background:linear-gradient(135deg,#e94560,#c73e54);border:2px solid #ff6b6b;color:white}
+.pred-ball.normal{background:#333;border:1px solid #555;color:#e0e0e0}
 .pred-item .pred-meta{font-size:10px;color:#888;margin-top:4px}
-.选项卡{显示:弹性布局;间距:5像素;底部外边距:10像素;换行:自动}
+.tabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
 .tab{flex:1;min-width:50px;padding:8px;background:rgba(255,255,255,0.05);border:1px solid #333;border-radius:8px;text-align:center;font-size:12px;font-weight:bold;color:#e0e0e0;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .tab.active{background:linear-gradient(135deg,#e94560,#c73e54);border-color:#e94560;color:white}
-.面板{display:none}
-.面板.active{display:block}
-.方案卡片{背景:rgba(0,0,0,0.2);圆角:10px;内边距:10px;下边距:8px;左 border:3px 实线}
-.方案卡片 .方案标题{字体大小:12px;字体粗细:加粗;底部间距:6px}
+.panel{display:none}
+.panel.active{display:block}
+.scheme-card{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;margin-bottom:8px;border-left:3px solid}
+.scheme-card .scheme-title{font-size:12px;font-weight:bold;margin-bottom:6px}
 .scheme-nums{display:flex;gap:5px;margin:5px 0;align-items:center;flex-wrap:wrap}
 .scheme-nums span{color:#888;font-size:10px;margin-right:4px;flex-shrink:0}
 .s-ball{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;flex-shrink:0}
@@ -54,6 +54,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft J
 .rank-meta{width:55px;text-align:right;font-size:9px;color:#888;flex-shrink:0}
 .no-data{text-align:center;padding:40px 20px;color:#888}
 .no-data h3{color:#e94560;margin-bottom:10px}
+.no-data p{font-size:12px;margin:6px 0}
+.no-data .error-detail{background:rgba(0,0,0,0.3);border:1px solid #333;border-radius:6px;padding:8px;font-size:10px;color:#aaa;margin:10px 0;text-align:left;word-break:break-all}
+.no-data button{background:linear-gradient(135deg,#e94560,#c73e54);border:none;border-radius:8px;padding:10px 24px;color:white;font-weight:bold;font-size:13px;cursor:pointer;margin-top:10px}
 .status-bar{text-align:center;font-size:10px;color:#666;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05)}
 .c-cyan{color:#4ecdc4}
 .c-red{color:#e94560}
@@ -68,508 +71,48 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft J
   <div class="no-data">
     <h3>⏳ 正在加载数据...</h3>
     <p>首次加载可能需要几秒</p>
-    <p style="font-size:11px;margin-top:8px;color:#666;">如果长时间未显示，请检查网络或下拉刷新</p>
+    <p id="status-text" style="color:#666;font-size:11px;">正在连接服务器...</p>
   </div>
 </div>
 </div>
 <script>
 (function(){
   "use strict";
-
-  // ========== 配置 ==========
   var API_URL = 'https://kk18520705540-code.github.io/taiwan-five-predict/data.json';
-  var REFRESH_INTERVAL = 30000; // 30秒刷新
-  var pNames = ['萬位','千位','百位','十位','個位'];
-  var sNames = ['熱號追蹤','冷號回補','趨勢跟隨','奇偶平衡','綜合評分'];
+  var pNames = ['万位','千位','百位','十位','个位'];
+  var sNames = ['热号追踪','冷号回补','趋势跟随','奇偶平衡','综合评分'];
   var schemeNamesFull = ['🔥 熱號追蹤','❄️ 冷號回補','📈 趨勢跟隨','⚖️ 奇偶平衡','🎯 綜合評分'];
   var colors = ['#e94560','#4ecdc4','#ffe66d','#a8e6cf','#ff8b94'];
+  var globalData = [], globalAnalysis = null, currentTab = 0, lastDataLength = 0;
 
-  var globalData = [];
-  var globalAnalysis = null;
-  var currentTab = 0;
-  var lastDataLength = 0;
+  函数 s1(d){var w=Math.min(30,d.length-1);var r=d.slice(1,1+w);var f={};for(var i=0;i<=9;i++)f[i]=0;for(var i=0;i<r.length;i++)f[r[i]]++;var e=[];for(var k in f)e.push([parseInt(k),f[k]]);e.sort(函数(a,b){return b[1]-a[1]});return e.slice(0,5).map(函数(x){return x[0]})}
+  函数 s2(d){变量 g={};对于(变量 i=0;i<=9;i++)g[i]=999;对于(变量 i=1;i<d.长度;i++){变量 n=d[i];如果(g[n]===999)g[n]=i}变量 e=[];对于(变量 k 在 g)e.推送([parseInt(k),g[k]]);e.排序(函数(a,b){返回 b[1]-a[1]});返回 e.切片(0,5).映射(函数(x){返回 x[0]})}
+  函数 s3(d){变量 w=Math.最小值(10,d.长度-1);变量 r=d.切片(1,1+w);变量 bc=0,sc=0;对于(变量 i=0;i<r.长度;i++){如果(r[i]>=5)bc++;否则 sc++}变量 pb=bc>=sc;变量 ca=[];对于(变量 i=0;i<=9;i++)如果((i>=5)===pb)ca.push(i);变量 f={};对于(变量 i=0;i<ca.长度;i++)f[ca[i]]=0;变量 r2=d.切片(1,21);对于(变量 i=0;i<r2.长度;i++){变量 n=r2[i];如果(ca.indexOf(n)>=0)f[n]++}变量 e=[];对于(变量 k in f)e.push([parseInt(k),f[k]]);e.sort(函数(a,b){返回 b[1]-a[1]});变量 重=e.切片(0,5).映(函数(射){返回 射[0]});如果(重.长度<5){对于(变量 i=0;i<ca.长度;i++){如果(重.indexOf(ca[i])<0)重.push(ca[i]);如果(重.长度>=5)破}}返回 重.切片(0,5)}
+ 函数 s4(d){varw=Math.min15,长度-1;rslice+oc0ecfori<++如果[]%2===++;否则}打印>字符<=9将g999添加到n中并对parseInt进行排序ab返回re5映射x中断
+  函数 s5(d){变量 sc={};对于(变量 i=0;i<=9;i++)sc[i]=0;变量 f={};对于(变量 i=0;i<=9;i++)f[i]=0;变量 r3=d.切片(1,31);对于(变量 i=0;i<r3.长度;i++)f[r3[i]]++;变量 mf=0;对于(变量 k in f)if(f[k]>mf)mf=f[k];if(mf===0)mf=1;对于(变量 i=0;i<=9;i++)sc[i]+=(f[i]/mf)*40;变量 g={};对于(变量 i=0;i<=9;i++)g[i]=999;对于(变量 i=1;i<d.长度;i++){变量 n=d[i];if(g[n]===999)g[n]=i}变量 mg=0;对于(变量 k in g)if(g[k]<999&&g[k]>mg)mg=g[k];if(mg===0)mg=1;对于(变量 i=0;i<=9;i++)if(g[i]<999)sc[i]+=(g[i]/mg)*30;变量 r1=d.切片(1,16);变量 oc=0,ec=0;对于(变量 i=0;i<r1.长度;i++){if(r1[i]%2===1)oc++;else ec++}变量 po=ec>oc;对于(变量 i=0;i<=9;i++)if((i%2===1)===po)sc[i]+=30;变量 e=[];对于(变量 k in sc)e.push([parseInt(k),sc[k]]);e.排序(函数(a,b){返回 b[1]-a[1]});返回 e.切片(0,5).映射(函数(x){返回 x[0]})}
+  变量 SC=[s1,s2,s3,s4,s5];
 
-  // ========== 5种分析方案 ==========
-  function s1(d) {
-    var w = Math.min(30, d.length - 1);
-    var r = d.slice(1, 1 + w);
-    var f = {}; for (var i = 0; i <= 9; i++) f[i] = 0;
-    for (var i = 0; i < r.length; i++) f[r[i]]++;
-    var e = []; for (var k in f) e.push([parseInt(k), f[k]]);
-    e.sort(function(a, b) { return b[1] - a[1]; });
-    return e.slice(0, 5).map(function(x) { return x[0]; });
-  }
+  函数 bs(pd,sf){var rs=[];for(var i=0;i<pd.length-1;i++){var fd=pd.slice(i+1);var pr=sf(fd);var a=pd[i];rs.push(pr.indexOf(a)>=0?'h':'m')}var cp=sf(pd.slice(1));var hc=0,mc=0,mhs=0,mms=0,th=0,tm=0;for(var i=0;i<rs.length;i++){if(rs[i]==='h'){hc++;th++;if(th>mhs)mhs=th;tm=0}else{mc++;tm++;if(tm>mms)mms=tm;th=0}}var cst='',csc=0;for(var i=0;i<rs.length;i++){if(i===0){cst=rs[i];csc=1}else if(rs[i]===cst)csc++;else break}return{cp:cp,hc:hc,mc:mc,mhs:mhs,mms:mms,ch:cst==='h'?csc:0,厘米:cst==='m'?csc:0,中国:pd[0]}}
 
-  function s2(d) {
-    var g = {}; for (var i = 0; i <= 9; i++) g[i] = 999;
-    for (var i = 1; i < d.length; i++) {
-      var n = d[i];
-      if (g[n] === 999) g[n] = i;
-    }
-    var e = []; for (var k in g) e.push([parseInt(k), g[k]]);
-    e.sort(function(a, b) { return b[1] - a[1]; });
-    return e.slice(0, 5).map(function(x) { return x[0]; });
-  }
+  函数 calcPeakScore(posData,digit){var d=posData;var score=0;var f={};for(var i=0;i<=9;i++)f[i]=0;var r30=d.切片(1,31);for(var i=0;i<r30.长度;i++)f[r30[i]]++;var mf=0;for(var k in f)if(f[k]>mf)mf=f[k];if(mf===0)mf=1;score+=(f[digit]/mf)*40;var gap=999;for(var i=1;i<d.长度;i++){if(d[i]===digit){gap=i-1;break}}if(gap===999)gap=d.长度;var mg=0;for(var i=0;i<=9;i++){var g=999;for(var j=1;j<d.长度;j++){if(d[j]===i){g=j-1;break}}if(g===999)g=d.长度;if(g>mg)mg=g}if(mg===0)mg=1;score+=(gap/mg)*30;var r15=d.切片(1,16);var oc=0,ec=0;for(var i=0;i<r15.长度;i++){if(r15[i]%2===1)oc++;else ec++}var po=ec>oc;if((digit%2===1)===po)score+=30;return Math.round(score)}
+  函数 calcTrend(posData,digit){var recent=posData.slice(1,11);var 计数=0;对于(var i=0;i<recent.长度;i++){如果(recent[i]===digit)计数++}如果(计数>=3)返回'↗';如果(计数<=0)返回'↘';返回'→'}
+  函数 calcStreak(posData,digit){var streak=0;for(var i=1;i<posData.length;i++){if(posData[i]===digit)streak++;否则 中断}返回 streak}
 
-  function s3(d) {
-    var w = Math.min(10, d.length - 1);
-    var r = d.slice(1, 1 + w);
-    var bc = 0, sc = 0;
-    for (var i = 0; i < r.length; i++) {
-      if (r[i] >= 5) bc++; else sc++;
-    }
-    var pb = bc >= sc;
-    var ca = []; for (var i = 0; i <= 9; i++) if ((i >= 5) === pb) ca.push(i);
-    var f = {}; for (var i = 0; i < ca.length; i++) f[ca[i]] = 0;
-    var r2 = d.slice(1, 21);
-    for (var i = 0; i < r2.length; i++) {
-      var n = r2[i];
-      if (ca.indexOf(n) >= 0) f[n]++;
-    }
-    var e = []; for (var k in f) e.push([parseInt(k), f[k]]);
-    e.sort(function(a, b) { return b[1] - a[1]; });
-    var re = e.slice(0, 5).map(function(x) { return x[0]; });
-    if (re.length < 5) {
-      for (var i = 0; i < ca.length; i++) {
-        if (re.indexOf(ca[i]) < 0) re.push(ca[i]);
-        if (re.length >= 5) break;
-      }
-    }
-    return re.slice(0, 5);
-  }
+  函数 分析(数据){如果(!数据||数据.长度<10)返回 空;var 正数数据=[[],[],[],[],[]];对于(var d=0;d<数据.长度;d++){对于(var j=0;j<5;j++){正数数据[j].推入(数据[d].数字[j])}}var 数组={};对于(var j=0;j<5;j++){数组[j]=[];对于(var bs=0;bs<5;bs++){数组[j].推入(bs(正数数据[j],SC[bs]))}}var 最佳=[];对于(var j=0;j<5;j++){var bs索引=0,mm=999;对于(var bs=0;bs<5;bs++){如果(数组[j][bs].cm<mm){mm=数组[j][bs].cm;bs索引=bs}}var r=数组[j][bs索引];最佳.推入({位置:p名称[j],预测:r.cp,sc:bs索引+1,sn:名称[bs索引],hc:r.hc,mc:r.mc,hr:r.hc+r.mc>0?(r.hc/(r.hc+r.mc)*100).toFixed(0):0,ch:r.ch,cm:r.cm})}var peaks=[];对于(var j=0;j<5;j++){var pd=正数数据[j];var posPeaks=[];对于(var digit=0;digit<=9;digit++){posPeaks.推入({digit:digit,score:calcPeakScore(pd,digit),trend:calcTrend(pd,digit),count30:(函数(){var c=0;var r=pd.slice(1,31);对于(var i=0;i<r.长度;i++)如果(r[i]===digit)c++;返回 c})(),差距:(函数(){对于(var i=1;i<pd.长度;i++){如果(pd[i]===digit)返回 i-1}返回 pd.长度-1})(),连败:计算连败(pd,digit)})}posPeaks.排序(函数(a,b){返回 b.score-a.score});peaks.推入(posPeaks)}返回{数据:数据,数组:数组,最佳:最佳,peaks:peaks,正数数据:正数数据}}
 
-  function s4(d) {
-    var w = Math.min(15, d.length - 1);
-    var r = d.slice(1, 1 + w);
-    var oc = 0, ec = 0;
-    for (var i = 0; i < r.length; i++) {
-      if (r[i] % 2 === 1) oc++; else ec++;
-    }
-    var po = ec > oc;
-    var ca = []; for (var i = 0; i <= 9; i++) if ((i % 2 === 1) === po) ca.push(i);
-    var g = {}; for (var i = 0; i < ca.length; i++) g[ca[i]] = 999;
-    for (var i = 1; i < d.length; i++) {
-      var n = d[i];
-      if (ca.indexOf(n) >= 0 && g[n] === 999) g[n] = i;
-    }
-    var e = []; for (var k in g) e.push([parseInt(k), g[k]]);
-    e.sort(function(a, b) { return b[1] - a[1]; });
-    var re = e.slice(0, 5).map(function(x) { return x[0]; });
-    if (re.length < 5) {
-      for (var i = 0; i < ca.length; i++) {
-        if (re.indexOf(ca[i]) < 0) re.push(ca[i]);
-        if (re.length >= 5) break;
-      }
-    }
-    return re.slice(0, 5);
-  }
+  function render(){var app=document.getElementById('app');if(!globalData||globalData.length===0){app.innerHTML='<div class="no-data"><h3>📭 暂无数据</h3><p>请检查网络连接或稍后刷新</p></div>';return}var a=globalAnalysis;var cur=globalData[0];var html='';html+='<div class="header"><h1>🎯 台湾5分彩 峰值分析</h1><div class="subtitle">'+globalData.length+'期數據 | 5方案比對 | 实时同步</div></div>';html+='<div class="current-issue"><div class="issue-info">📌 當期 '+cur.issue+' | '+cur.date+' '+cur.time+'</div><div class="numbers-row">';for(var i=0;i<5;i++){html+='<div class="number-ball">'+cur.numbers[i]+'</div>'}html+='</div></div>';html+='<div class="prediction-box"><div class="pred-title">🔮 下期預測推薦（綜合峰值）</div><div class="pred-grid">';for(var j=0;j<5;j++){var peakList=a.peaks[j];var top5=peakList.slice(0,5);var bestScore=top5[0].score;var worstScore=top5[4].score;html+='<div class="pred-item"><div class="pos-name">'+pNames[j]+'</div><div class="pred-nums">';for(var i=0;i<5;i++){var digit=top5[i].digit;var cls='normal';if(i===0)cls='best';else if(i===4)cls='worst';html+='<div class="pred-ball '+cls+'">'+digit+'</div>'}html+='</div><div class="pred-meta"><span class="c-cyan">⭐最高'+bestScore+'分</span> | <span class="c-red">⚠️最低'+worstScore+'分</span></div></div>'}html+='</div></div>';html+='<div class="tabs" id="tab-container">';for(var j=0;j<5;j++){html+='<div class="tab '+(j===currentTab?'active':'')+'" data-idx="'+j+'">'+pNames[j]+'</div>'}html+='</div>';for(var j=0;j<5;j++){html+='<div class="panel '+(j===currentTab?'active':'')+'" id="panel-'+j+'">';var peakList=a.peaks[j];var rec5=peakList.slice(0,5);var exc5=peakList.slice(5,10);html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';html+='<div class="rank-section"><div class="rank-title" style="color:#4ecdc4;border-color:#4ecdc4">✅ 推薦5碼（峰值排序）</div><div class="rank-list">';for(var i=0;i<5;i++){var item=rec5[i];var maxScore=peakList[0].score;var pct=maxScore>0?(item.score/maxScore*100):0;var mark='';if(i===0)mark='⭐';else if(i===4)mark='⚠️';html+='<div class="rank-item"><div class="rank-num">'+mark+(i+1)+'</div><div class="rank-ball" style="background:linear-gradient(135deg,#4ecdc4,#2a9d8f);color:#0f0f1a">'+item.digit+'</div><div class="rank-bar-bg"><div class="rank-bar" style="width:'+pct+'%;background:linear-gradient(90deg,#4ecdc4,#2a9d8f)"></div></div><div class="rank-score" style="color:#4ecdc4">'+item.score+'</div><div class="rank-meta">'+item.trend+' 遺'+item.gap+'</div></div>'}html+='</div></div>';html+='<div class="rank-section"><div class="rank-title" style="color:#e94560;border-color:#e94560">❌ 排除5碼（風險排序）</div><div class="rank-list">';for(var i=0;i<5;i++){var item=exc5[i];var maxScore=peakList[0].score;var pct=maxScore>0?(item.score/maxScore*100):0;var mark='';if(i===0)mark='🔥';else if(i===4)mark='✅';html+='<div class="rank-item"><div class="rank-num">'+mark+(i+6)+'</div><div class="rank-ball" style="background:#333;border:1px solid #555;color:#e0e0e0">'+item.digit+'</div><div class="rank-bar-bg"><div class="rank-bar" style="width:'+pct+'%;background:linear-gradient(90deg,#e94560,#c73e54)"></div></div><div class="rank-score" style="color:#e94560">'+item.score+'</div><div class="rank-meta">'+item.trend+' 遺'+item.gap+'</div></div>'}html+='</div></div>';html+='</div>';for(var s=0;s<5;s++){var r=a.ar[j][s];var rate=r.hc+r.mc>0?(r.hc/(r.hc+r.mc)*100).toFixed(1):0;html+='<div class="scheme-card" style="border-left-color:'+colors[s]+'"><div class="scheme-title" style="color:'+colors[s]+'">'+schemeNamesFull[s]+'</div><div class="scheme-nums"><span>推薦:</span>';for(var i=0;i<r.cp.length;i++){var isHit=r.cp[i]===r.cn;html+='<div class="s-ball '+(isHit?'hit':'miss')+'">'+r.cp[i]+'</div>'}html+='</div><div class="scheme-stats"><div>中/非: '+r.hc+'/'+r.mc+'</div><div>命中率: '+rate+'%</div><div>最高連中/非: '+r.mhs+'/'+r.mms+'</div><div>當前連中/非: '+r.ch+'/'+r.cm+'</div></div></div>'}html+='</div>'}html+='<div class="status-bar">⚠️ 統計僅供參考，不保證結果 | 上次更新: '+new Date().toLocaleTimeString()+'</div>';app.innerHTML=html;bindTabEvents()}
 
-  function s5(d) {
-    var sc = {}; for (var i = 0; i <= 9; i++) sc[i] = 0;
-    var f = {}; for (var i = 0; i <= 9; i++) f[i] = 0;
-    var r3 = d.slice(1, 31);
-    for (var i = 0; i < r3.length; i++) f[r3[i]]++;
-    var mf = 0; for (var k in f) if (f[k] > mf) mf = f[k];
-    if (mf === 0) mf = 1;
-    for (var i = 0; i <= 9; i++) sc[i] += (f[i] / mf) * 40;
-    var g = {}; for (var i = 0; i <= 9; i++) g[i] = 999;
-    for (var i = 1; i < d.length; i++) {
-      var n = d[i];
-      if (g[n] === 999) g[n] = i;
-    }
-    var mg = 0; for (var k in g) if (g[k] < 999 && g[k] > mg) mg = g[k];
-    if (mg === 0) mg = 1;
-    for (var i = 0; i <= 9; i++) if (g[i] < 999) sc[i] += (g[i] / mg) * 30;
-    var r1 = d.slice(1, 16);
-    var oc = 0, ec = 0;
-    for (var i = 0; i < r1.length; i++) {
-      if (r1[i] % 2 === 1) oc++; else ec++;
-    }
-    var po = ec > oc;
-    for (var i = 0; i <= 9; i++) if ((i % 2 === 1) === po) sc[i] += 30;
-    var e = []; for (var k in sc) e.push([parseInt(k), sc[k]]);
-    e.sort(function(a, b) { return b[1] - a[1]; });
-    return e.slice(0, 5).map(function(x) { return x[0]; });
-  }
+  function bindTabEvents(){var tc=document.getElementById('tab-container');if(!tc)return;tc.addEventListener('click',function(e){var tab=e.target.closest('.tab');if(!tab)return;var idx=parseInt(tab.getAttribute('data-idx'));if(isNaN(idx))return;switchTab(idx)});tc.addEventListener('touchend',function(e){var tab=e.target.closest('.tab');if(!tab)return;e.preventDefault();var idx=parseInt(tab.getAttribute('data-idx'));if(isNaN(idx))return;switchTab(idx)})}
+  function switchTab(idx){if(idx<0||idx>4)return;currentTab=idx;var tabs=document.querySelectorAll('.tab');var panels=document.querySelectorAll('.panel');for(var i=0;i<5;i++){if(tabs[i])tabs[i].classList.toggle('active',i===idx);if(panels[i])panels[i].classList.toggle('active',i===idx)}}
 
-  var SC = [s1, s2, s3, s4, s5];
+  function showError(msg,detail){var app=document.getElementById('app');app.innerHTML='<div class="no-data"><h3>❌ 加载失败</h3><p>'+msg+'</p><div class="error-detail">'+detail+'</div><button onclick="location.reload()">重新加载</button></div>'}
 
-  function bs(pd, sf) {
-    var rs = [];
-    for (var i = 0; i < pd.length - 1; i++) {
-      var fd = pd.slice(i + 1);
-      var pr = sf(fd);
-      var a = pd[i];
-      rs.push(pr.indexOf(a) >= 0 ? 'h' : 'm');
-    }
-    var cp = sf(pd.slice(1));
-    var hc = 0, mc = 0, mhs = 0, mms = 0, th = 0, tm = 0;
-    for (var i = 0; i < rs.length; i++) {
-      if (rs[i] === 'h') {
-        hc++; th++;
-        if (th > mhs) mhs = th;
-        tm = 0;
-      } else {
-        mc++; tm++;
-        if (tm > mms) mms = tm;
-        th = 0;
-      }
-    }
-    var cst = '', csc = 0;
-    for (var i = 0; i < rs.length; i++) {
-      if (i === 0) { cst = rs[i]; csc = 1; }
-      else if (rs[i] === cst) csc++;
-      else break;
-    }
-    return { cp: cp, hc: hc, mc: mc, mhs: mhs, mms: mms, ch: cst === 'h' ? csc : 0, cm: cst === 'm' ? csc : 0, cn: pd[0] };
-  }
+  function loadData(retryCount){retryCount=retryCount||0;var status=document.getElementById('status-text');if(status)status.textContent='正在请求数据... (第'+(retryCount+1)+'次尝试)';var url=API_URL+'?_t='+Date.now()+'&_r='+Math.random();fetch(url,{method:'GET',cache:'no-store',headers:{'Cache-Control':'no-cache'}}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}).then(function(data){var arr=null;if(Array.isArray(data))arr=data;else if(data&&typeof data==='object')arr=data.data||data.history||data.records||data.results||data.list;if(!arr||!Array.isArray(arr)||arr.length===0){throw new Error('数据为空或格式不正确')};var changed=!globalData||globalData.length!==arr.length;lastDataLength=arr.length;globalData=arr;globalAnalysis=analyze(globalData);render();console.log('✅ 数据加载成功: '+arr.length+'期')}).catch(function(e){console.log('❌ 加载失败:',e.message);if(retryCount<3){var delay=2000*(retryCount+1);if(status)status.textContent='加载失败，'+delay/1000+'秒后重试... ('+e.message+')';setTimeout(function(){loadData(retryCount+1)},delay)}else{showError('无法从服务器获取数据','错误: '+e.message+'<br>URL: '+API_URL+'<br>时间: '+new Date().toLocaleString()+'<br><br>可能原因:<br>1. GitHub Pages 缓存未刷新 (等5-10分钟)<br>2. data.json 文件不存在<br>3. 网络连接问题')}})}
 
-  // ========== 峰值计算 ==========
-  function calcPeakScore(posData, digit) {
-    var d = posData;
-    var score = 0;
-    var f = {}; for (var i = 0; i <= 9; i++) f[i] = 0;
-    var r30 = d.slice(1, 31);
-    for (var i = 0; i < r30.length; i++) f[r30[i]]++;
-    var mf = 0; for (var k in f) if (f[k] > mf) mf = f[k];
-    if (mf === 0) mf = 1;
-    score += (f[digit] / mf) * 40;
-    var gap = 999;
-    for (var i = 1; i < d.length; i++) {
-      if (d[i] === digit) { gap = i - 1; break; }
-    }
-    if (gap === 999) gap = d.length;
-    var mg = 0;
-    for (var i = 0; i <= 9; i++) {
-      var g = 999;
-      for (var j = 1; j < d.length; j++) {
-        if (d[j] === i) { g = j - 1; break; }
-      }
-      if (g === 999) g = d.length;
-      if (g > mg) mg = g;
-    }
-    if (mg === 0) mg = 1;
-    score += (gap / mg) * 30;
-    var r15 = d.slice(1, 16);
-    var oc = 0, ec = 0;
-    for (var i = 0; i < r15.length; i++) {
-      if (r15[i] % 2 === 1) oc++; else ec++;
-    }
-    var po = ec > oc;
-    if ((digit % 2 === 1) === po) score += 30;
-    return Math.round(score);
-  }
-
-  function calcTrend(posData, digit) {
-    var recent = posData.slice(1, 11);
-    var count = 0;
-    for (var i = 0; i < recent.length; i++) {
-      if (recent[i] === digit) count++;
-    }
-    if (count >= 3) return '↗';
-    if (count <= 0) return '↘';
-    return '→';
-  }
-
-  function calcStreak(posData, digit) {
-    var streak = 0;
-    for (var i = 1; i < posData.length; i++) {
-      if (posData[i] === digit) streak++;
-      else break;
-    }
-    return streak;
-  }
-
-  // ========== 分析主函数 ==========
-  function analyze(data) {
-    if (!data || data.length < 10) return null;
-    var posData = [[], [], [], [], []];
-    for (var d = 0; d < data.length; d++) {
-      for (var j = 0; j < 5; j++) {
-        posData[j].push(data[d].numbers[j]);
-      }
-    }
-    var ar = {};
-    for (var j = 0; j < 5; j++) {
-      ar[j] = [];
-      for (var s = 0; s < 5; s++) {
-        ar[j].push(bs(posData[j], SC[s]));
-      }
-    }
-    var best = [];
-    for (var j = 0; j < 5; j++) {
-      var bsIdx = 0, mm = 999;
-      for (var s = 0; s < 5; s++) {
-        if (ar[j][s].cm < mm) { mm = ar[j][s].cm; bsIdx = s; }
-      }
-      var r = ar[j][bsIdx];
-      best.push({
-        pos: pNames[j], pred: r.cp, sc: bsIdx + 1, sn: sNames[bsIdx],
-        hc: r.hc, mc: r.mc,
-        hr: r.hc + r.mc > 0 ? (r.hc / (r.hc + r.mc) * 100).toFixed(0) : 0,
-        ch: r.ch, cm: r.cm
-      });
-    }
-    var peaks = [];
-    for (var j = 0; j < 5; j++) {
-      var pd = posData[j];
-      var posPeaks = [];
-      for (var digit = 0; digit <= 9; digit++) {
-        posPeaks.push({
-          digit: digit,
-          score: calcPeakScore(pd, digit),
-          trend: calcTrend(pd, digit),
-          count30: (function() {
-            var c = 0;
-            var r = pd.slice(1, 31);
-            for (var i = 0; i < r.length; i++) if (r[i] === digit) c++;
-            return c;
-          })(),
-          gap: (function() {
-            for (var i = 1; i < pd.length; i++) {
-              if (pd[i] === digit) return i - 1;
-            }
-            return pd.length - 1;
-          })(),
-          streak: calcStreak(pd, digit)
-        });
-      }
-      posPeaks.sort(function(a, b) { return b.score - a.score; });
-      peaks.push(posPeaks);
-    }
-    return { data: data, ar: ar, best: best, peaks: peaks, posData: posData };
-  }
-
-  // ========== 渲染 ==========
-  function render() {
-    var app = document.getElementById('app');
-    if (!globalData || globalData.length === 0) {
-      app.innerHTML = '<div class="no-data"><h3>📭 暂无数据</h3><p>请检查网络连接或稍后刷新</p></div>';
-      return;
-    }
-    var a = globalAnalysis;
-    var cur = globalData[0];
-    var html = '';
-
-    // 头部
-    html += '<div class="header"><h1>🎯 台湾5分彩 峰值分析</h1><div class="subtitle">' + globalData.length + '期數據 | 5方案比對 | 实时同步</div></div>';
-
-    // 当期
-    html += '<div class="current-issue"><div class="issue-info">📌 當期 ' + cur.issue + ' | ' + cur.date + ' ' + cur.time + '</div><div class="numbers-row">';
-    for (var i = 0; i < 5; i++) {
-      html += '<div class="number-ball">' + cur.numbers[i] + '</div>';
-    }
-    html += '</div></div>';
-
-    // 下期预测
-    html += '<div class="prediction-box"><div class="pred-title">🔮 下期預測推薦（綜合峰值）</div><div class="pred-grid">';
-    for (var j = 0; j < 5; j++) {
-      var peakList = a.peaks[j];
-      var top5 = peakList.slice(0, 5);
-      var bestScore = top5[0].score;
-      var worstScore = top5[4].score;
-      html += '<div class="pred-item"><div class="pos-name">' + pNames[j] + '</div><div class="pred-nums">';
-      for (var i = 0; i < 5; i++) {
-        var digit = top5[i].digit;
-        var cls = 'normal';
-        if (i === 0) cls = 'best';
-        else if (i === 4) cls = 'worst';
-        html += '<div class="pred-ball ' + cls + '">' + digit + '</div>';
-      }
-      html += '</div><div class="pred-meta"><span class="c-cyan">⭐最高' + bestScore + '分</span> | <span class="c-red">⚠️最低' + worstScore + '分</span></div></div>';
-    }
-    html += '</div></div>';
-
-    // Tab
-    html += '<div class="tabs" id="tab-container">';
-    for (var j = 0; j < 5; j++) {
-      html += '<div class="tab ' + (j === currentTab ? 'active' : '') + '" data-idx="' + j + '">' + pNames[j] + '</div>';
-    }
-    html += '</div>';
-
-    // 各位置面板
-    for (var j = 0; j < 5; j++) {
-      html += '<div class="panel ' + (j === currentTab ? 'active' : '') + '" id="panel-' + j + '">';
-
-      var peakList = a.peaks[j];
-      var rec5 = peakList.slice(0, 5);
-      var exc5 = peakList.slice(5, 10);
-
-      html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
-
-      // 推荐5码
-      html += '<div class="rank-section"><div class="rank-title" style="color:#4ecdc4;border-color:#4ecdc4">✅ 推薦5碼（峰值排序）</div><div class="rank-list">';
-      for (var i = 0; i < 5; i++) {
-        var item = rec5[i];
-        var maxScore = peakList[0].score;
-        var pct = maxScore > 0 ? (item.score / maxScore * 100) : 0;
-        var mark = '';
-        if (i === 0) mark = '⭐';
-        else if (i === 4) mark = '⚠️';
-        html += '<div class="rank-item"><div class="rank-num">' + mark + (i+1) + '</div>';
-        html += '<div class="rank-ball" style="background:linear-gradient(135deg,#4ecdc4,#2a9d8f);color:#0f0f1a">' + item.digit + '</div>';
-        html += '<div class="rank-bar-bg"><div class="rank-bar" style="width:' + pct + '%;background:linear-gradient(90deg,#4ecdc4,#2a9d8f)"></div></div>';
-        html += '<div class="rank-score" style="color:#4ecdc4">' + item.score + '</div>';
-        html += '<div class="rank-meta">' + item.trend + ' 遺' + item.gap + '</div></div>';
-      }
-      html += '</div></div>';
-
-      // 排除5码
-      html += '<div class="rank-section"><div class="rank-title" style="color:#e94560;border-color:#e94560">❌ 排除5碼（風險排序）</div><div class="rank-list">';
-      for (var i = 0; i < 5; i++) {
-        var item = exc5[i];
-        var maxScore = peakList[0].score;
-        var pct = maxScore > 0 ? (item.score / maxScore * 100) : 0;
-        var mark = '';
-        if (i === 0) mark = '🔥';
-        else if (i === 4) mark = '✅';
-        html += '<div class="rank-item"><div class="rank-num">' + mark + (i+6) + '</div>';
-        html += '<div class="rank-ball" style="background:#333;border:1px solid #555;color:#e0e0e0">' + item.digit + '</div>';
-        html += '<div class="rank-bar-bg"><div class="rank-bar" style="width:' + pct + '%;background:linear-gradient(90deg,#e94560,#c73e54)"></div></div>';
-        html += '<div class="rank-score" style="color:#e94560">' + item.score + '</div>';
-        html += '<div class="rank-meta">' + item.trend + ' 遺' + item.gap + '</div></div>';
-      }
-      html += '</div></div>';
-
-      html += '</div>';
-
-      // 5种方案
-      for (var s = 0; s < 5; s++) {
-        var r = a.ar[j][s];
-        var rate = r.hc + r.mc > 0 ? (r.hc / (r.hc + r.mc) * 100).toFixed(1) : 0;
-        html += '<div class="scheme-card" style="border-left-color:' + colors[s] + '">';
-        html += '<div class="scheme-title" style="color:' + colors[s] + '">' + schemeNamesFull[s] + '</div>';
-        html += '<div class="scheme-nums"><span>推薦:</span>';
-        for (var i = 0; i < r.cp.length; i++) {
-          var isHit = r.cp[i] === r.cn;
-          html += '<div class="s-ball ' + (isHit ? 'hit' : 'miss') + '">' + r.cp[i] + '</div>';
-        }
-        html += '</div>';
-        html += '<div class="scheme-stats">';
-        html += '<div>中/非: ' + r.hc + '/' + r.mc + '</div>';
-        html += '<div>命中率: ' + rate + '%</div>';
-        html += '<div>最高連中/非: ' + r.mhs + '/' + r.mms + '</div>';
-        html += '<div>當前連中/非: ' + r.ch + '/' + r.cm + '</div>';
-        html += '</div></div>';
-      }
-
-      html += '</div>';
-    }
-
-    html += '<div class="status-bar">⚠️ 統計僅供參考，不保證結果 | 數據每30秒自動刷新 | 上次更新: ' + new Date().toLocaleTimeString() + '</div>';
-
-    app.innerHTML = html;
-
-    // 绑定Tab点击事件（使用事件委托，更可靠）
-    bindTabEvents();
-  }
-
-  // ========== Tab切换（修复版）==========
-  function bindTabEvents() {
-    var tabContainer = document.getElementById('tab-container');
-    if (!tabContainer) return;
-
-    tabContainer.addEventListener('click', function(e) {
-      var tab = e.target.closest('.tab');
-      if (!tab) return;
-      var idx = parseInt(tab.getAttribute('data-idx'));
-      if (isNaN(idx)) return;
-      switchTab(idx);
-    });
-
-    // 同时支持touch事件（移动端更灵敏）
-    tabContainer.addEventListener('touchend', function(e) {
-      var tab = e.target.closest('.tab');
-      if (!tab) return;
-      e.preventDefault();
-      var idx = parseInt(tab.getAttribute('data-idx'));
-      if (isNaN(idx)) return;
-      switchTab(idx);
-    });
-  }
-
-  function switchTab(idx) {
-    if (idx < 0 || idx > 4) return;
-    currentTab = idx;
-
-    var tabs = document.querySelectorAll('.tab');
-    var panels = document.querySelectorAll('.panel');
-
-    for (var i = 0; i < 5; i++) {
-      if (tabs[i]) {
-        tabs[i].classList.toggle('active', i === idx);
-      }
-      if (panels[i]) {
-        panels[i].classList.toggle('active', i === idx);
-      }
-    }
-  }
-
-  // ========== 数据加载（带缓存穿透）==========
-  function loadData() {
-    var url = API_URL + '?_t=' + Date.now() + '&_r=' + Math.random();
-
-    fetch(url, {
-      method: 'GET',
-      cache: 'no-store',
-      headers: { 'Cache-Control': 'no-cache' }
-    })
-    .then(function(r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(data) {
-      var arr = null;
-      if (Array.isArray(data)) {
-        arr = data;
-      } else if (data && typeof data === 'object') {
-        // 尝试各种可能的字段名
-        arr = data.data || data.history || data.records || data.results || data.list;
-      }
-
-      if (!arr || !Array.isArray(arr) || arr.length === 0) {
-        console.log('数据为空或格式不对');
-        return;
-      }
-
-      // 检查数据是否有变化
-      var changed = !globalData || globalData.length !== arr.length || lastDataLength !== arr.length;
-      lastDataLength = arr.length;
-
-      如果 (已更改) {
-        全局数据 = 数组;
-        全局分析 = 分析(全局数据);
-        render();
-        console.log('✅ 数据已更新: ' + arr.length + '期 | ' + new Date().toLocaleTimeString());
-      } 否则 {
-日志'⏳ 数据无变化: ' + .长度 + '期 | ' + 新 日期(
-      }
-    })
-    .catch(function(e) {
-      console.log('❌ 加载失败:', e.message);
-      // 如果已经有数据，不显示错误，保持旧数据
-      如果 (!全局数据 || 全局数据.长度 === 0) {
-        文档.获取元素ById('app').innerHTML = 
-          '<div class="no-data"><h3>❌ 加载失败</h3><p>' + e.message + '</p><p style="font-size:11px;margin-top:8px;">请检查网络后下拉刷新</p></div>';
-      }
-    });
-  }
-
-  // ========== 启动 ==========
-  console.log('🚀 台湾5分彩分析器启动');
-  console.log('📡 API:', API_URL);
-
+  console.log('🚀 分析器启动');
   loadData();
-  setInterval(loadData, REFRESH_INTERVAL);
-
-  // 页面可见性变化时立即刷新（切换回页面时）
-  document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-      console.log('👁️ 页面重新可见，立即刷新');
-      loadData();
-    }
-  });
-
+  setInterval(function(){loadData()},30000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){console.log('👁️ 页面可见，立即刷新');loadData()}});
 })();
 </script>
 </body>
