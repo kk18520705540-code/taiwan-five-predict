@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>智能峰值预测</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Microsoft JhengHei",sans-serif;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);color:#e0e0e0;min-height:100vh;padding:10px;font-size:14px}
+.container{max-width:480px;margin:0 auto}
+
+/* 头部 */
+.header{text-align:center;border-bottom:2px solid #e94560;padding-bottom:12px;margin-bottom:12px}
+.header h1{color:#e94560;font-size:18px;margin:0;display:flex;align-items:center;justify-content:center;gap:6px}
+.header .subtitle{color:#888;font-size:11px;margin-top:4px}
+
+/* 当前期 */
+.current-issue{background:rgba(233,69,96,0.1);border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center}
+.current-issue .issue-info{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:8px}
+.numbers-row{display:flex;justify-content:center;gap:8px}
+.number-ball{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#e94560,#c73e54);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;color:white;box-shadow:0 2px 8px rgba(233,69,96,0.4)}
+
+/* 预测区域 */
+.prediction-box{background:rgba(78,205,196,0.1);border:1px solid rgba(78,205,196,0.3);border-radius:12px;padding:12px;margin-bottom:12px}
+.prediction-box .pred-title{color:#4ecdc4;font-weight:bold;font-size:13px;text-align:center;margin-bottom:10px}
+.pred-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pred-item{background:rgba(0,0,0,0.3);border-radius:10px;padding:10px;text-align:center;border:1px solid #333;position:relative}
+.pred-item .pos-name{color:#e94560;font-weight:bold;font-size:12px;margin-bottom:6px}
+.pred-nums{display:flex;justify-content:center;gap:3px;margin:6px 0;position:relative}
+.pred-ball{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;position:relative}
+.pred-ball-label{position:absolute;top:-8px;right:-4px;font-size:8px}
+.pred-item .scheme-name{font-size:9px;color:#888;margin-top:4px}
+.pred-item .scheme-stats{font-size:9px;color:#aaa;margin-top:2px}
+.pred-item .score-info{font-size:8px;color:#666;margin-top:3px}
+
+/* Tab */
+.tabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.tab{flex:1;min-width:50px;padding:8px;background:rgba(255,255,255,0.05);border:1px solid #333;border-radius:8px;text-align:center;font-size:12px;font-weight:bold;color:#e0e0e0;cursor:pointer}
+.tab.active{background:linear-gradient(135deg,#e94560,#c73e54);border-color:#e94560;color:white}
+
+/* 面板 */
+.panel{display:none}
+.panel.active{display:block}
+
+/* 推荐排除区域 */
+.rank-section{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.rank-box{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px}
+.rank-box .rank-title{font-size:10px;font-weight:bold;margin-bottom:6px;padding-left:8px;border-left:3px solid}
+.rank-box.rec .rank-title{color:#4ecdc4;border-color:#4ecdc4}
+.rank-box.exc .rank-title{color:#e94560;border-color:#e94560}
+.rank-item{display:flex;align-items:center;padding:4px 2px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:10px}
+.rank-item:last-child{border-bottom:none}
+.rank-order{width:14px;text-align:center;font-weight:bold;color:#888;font-size:10px}
+.rank-ball{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;margin:0 4px}
+.rank-bar-bg{flex:1;height:10px;background:rgba(0,0,0,0.3);border-radius:2px;overflow:hidden;margin:0 4px}
+.rank-bar{height:100%;border-radius:2px}
+.rank-score{width:24px;text-align:right;font-size:9px;color:#aaa}
+.rank-mark{width:32px;text-align:right;font-size:8px}
+
+/* 峰值说明 */
+.peak-note{background:rgba(255,255,255,0.03);border-radius:6px;padding:6px;margin-bottom:10px;font-size:9px;color:#888}
+
+/* 方案卡片 - 恢复彩色竖线 */
+.scheme-card{background:rgba(0,0,0,0.2);border-radius:10px;padding:10px;margin-bottom:8px;border-left:3px solid}
+.scheme-card .scheme-title{font-size:11px;font-weight:bold;margin-bottom:4px}
+.scheme-nums{display:flex;gap:4px;margin:4px 0;align-items:center}
+.scheme-nums span{color:#888;font-size:9px;margin-right:4px}
+.s-ball{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold}
+.s-ball.hit{background:#4ecdc4;color:#0f0f1a;border:1px solid #4ecdc4}
+.s-ball.miss{background:#333;color:#e0e0e0;border:1px solid #555}
+.scheme-stats{display:flex;gap:8px;font-size:9px;color:#aaa}
+.scheme-stats span{background:rgba(0,0,0,0.2);padding:3px 6px;border-radius:4px}
+
+/* 状态栏 */
+.status-bar{text-align:center;font-size:10px;color:#666;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.05)}
+.history-section{background:rgba(0,0,0,0.2);border-radius:8px;padding:0 8px 8px;font-size:10px;overflow-y:auto;flex:1;max-height:none}
+.history-section::-webkit-scrollbar{width:3px}
+.history-section::-webkit-scrollbar-thumb{background:#e94560;border-radius:3px}
+.history-header{display:flex;color:#888;padding:6px 0;border-bottom:1px solid #333;font-size:10px;font-weight:bold;background:#1a1a2e;position:sticky;top:0;z-index:1}
+.history-row{display:flex;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.history-row:last-child{border-bottom:none}
+.history-cell{flex:1;text-align:center}
+
+/* 无数据 */
+.no-data{text-align:center;padding:40px 20px;color:#888}
+.no-data h3{color:#e94560;margin-bottom:10px}
+.no-data textarea{width:100%;height:120px;background:rgba(0,0,0,0.3);border:1px solid #333;border-radius:8px;color:#e0e0e0;padding:10px;font-size:12px;margin:10px 0}
+.no-data button{background:linear-gradient(135deg,#e94560,#c73e54);border:none;border-radius:8px;padding:10px 24px;color:white;font-weight:bold;font-size:13px;cursor:pointer}
+
+/* 休市封面 */
+.closed-cover{text-align:center;padding:60px 20px;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);border:2px solid #e94560;border-radius:16px;margin-bottom:20px}
+.closed-cover .lock-icon{font-size:48px;margin-bottom:16px}
+.closed-cover h2{color:#e94560;font-size:20px;margin-bottom:8px}
+.closed-cover .closed-time{color:#888;font-size:13px;margin-bottom:20px}
+.closed-cover .countdown-box{background:rgba(233,69,96,0.1);border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:16px;margin-bottom:20px;display:inline-block}
+.closed-cover .countdown-box .cd-label{color:#e94560;font-size:11px;margin-bottom:4px}
+.closed-cover .countdown-box .cd-time{color:#ffe66d;font-size:24px;font-weight:bold}
+.closed-cover .ai-note{background:rgba(78,205,196,0.05);border:1px solid rgba(78,205,196,0.2);border-radius:10px;padding:12px;text-align:left;font-size:11px;color:#aaa;line-height:1.6;max-width:360px;margin:0 auto}
+.closed-cover .ai-note strong{color:#4ecdc4}
+
+/* 复盘面板 */
+.review-panel{max-width:420px;margin:20px auto;background:linear-gradient(135deg,#0f0f1a,#1a1a2e);border:2px solid #e94560;border-radius:16px;padding:18px;color:#e0e0e0;box-shadow:0 10px 40px rgba(0,0,0,0.6);font-size:12px}
+.review-panel .review-header{text-align:center;border-bottom:2px solid #e94560;padding-bottom:10px;margin-bottom:12px}
+.review-panel .review-header h3{color:#e94560;margin:0;font-size:15px}
+.review-tabs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.review-tab{flex:1;min-width:50px;padding:6px;background:rgba(255,255,255,0.05);border:1px solid #333;border-radius:8px;cursor:pointer;text-align:center;font-size:11px;font-weight:bold;color:#e0e0e0}
+.review-tab.active{background:linear-gradient(135deg,#e94560,#c73e54);border-color:#e94560;color:white}
+
+/* 当天历史记录 */
+.history-section{flex:1;display:flex;flex-direction:column;min-width:0}
+.history-section .history-title{color:#ffe66d;font-weight:bold;font-size:11px;margin-bottom:6px;text-align:center}
+.history-table{width:100%;border-collapse:collapse;font-size:10px}
+.history-table th{background:#1a1a2e;color:#888;padding:6px 4px;text-align:center;font-size:9px;border-bottom:1px solid #333}
+.history-table td{padding:5px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
+.history-table .hit-yes{color:#4ecdc4;font-weight:bold}
+.history-table .hit-no{color:#e94560}
+.history-scroll{flex:1;overflow-y:auto;max-height:none}
+.history-scroll::-webkit-scrollbar{width:3px}
+.history-scroll::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+/* 并排布局 */
+.side-by-side{display:flex;gap:10px;align-items:stretch}
+.side-by-side .schemes-column{flex:1.2;min-width:0}
+.side-by-side .history-column{flex:1;min-width:0;display:flex;flex-direction:column}
+
+@media(max-width:360px){
+  .pred-grid{grid-template-columns:1fr}
+  .number-ball{width:32px;height:32px;font-size:14px}
+  .rank-section{grid-template-columns:1fr}
+  .side-by-side{flex-direction:column}
+}
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="container">
+<div id="app">
+  <div class="no-data">
+    <h3>⏳ 正在加载数据...</h3>
+    <p>从 GitHub 获取最新分析数据</p>
+    <div style="margin-top:20px;font-size:30px;">🔄</div>
+  </div>
+</div>
+</div>
+<script>
+// ===== 全局变量 =====
+var p=['萬位','千位','百位','十位','個位'];
+var sn=['熱號','冷號','趨勢','奇偶','綜合'];
+var colors=['#e94560','#4ecdc4','#ffe66d','#a8e6cf','#ff8b94'];
+var schemeNamesFull=['🔥 熱號追蹤','❄️ 冷號回補','📈 趨勢跟隨','⚖️ 奇偶平衡','🎯 綜合評分'];
+
+// ===== 休市检测 =====
+function isMarketClosed() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var totalMin = h * 60 + m;
+    return totalMin >= 120 && totalMin < 425;
+}
+
+function getCountdownToOpen() {
+    var now = new Date();
+    var h = now.getHours();
+    var m = now.getMinutes();
+    var s = now.getSeconds();
+    var totalMin = h * 60 + m;
+    var targetMin = 425;
+    var diffSec = (targetMin - totalMin) * 60 - s;
+    if (diffSec < 0) diffSec = 0;
+    var hh = Math.floor(diffSec / 3600);
+    var mm = Math.floor((diffSec % 3600) / 60);
+    var ss = diffSec % 60;
+    return (hh < 10 ? '0' + hh : hh) + ':' + (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss);
+}
+
+// ===== calcDigitStats =====
+function calcDigitStats(posData) {
+    var stats = [];
+    for (var n = 0; n <= 9; n++) {
+        var count = 0;
+        for (var i = 0; i < posData.length; i++) {
+            if (posData[i] === n) count++;
+        }
+
+        var miss = 0;
+        for (var i = 0; i < posData.length; i++) {
+            if (posData[i] === n) break;
+            miss++;
+        }
+
+        var maxMiss = 0, curMiss = 0;
+        for (var i = 0; i < posData.length; i++) {
+            if (posData[i] === n) {
+                if (curMiss > maxMiss) maxMiss = curMiss;
+                curMiss = 0;
+            } else {
+                curMiss++;
+            }
+        }
+
+        var missSum = 0, missCount = 0, tempMiss = 0;
+        for (var i = 0; i < posData.length; i++) {
+            if (posData[i] === n) {
+                missSum += tempMiss;
+                missCount++;
+                tempMiss = 0;
+            } else {
+                tempMiss++;
+            }
+        }
+        var avgMiss = missCount > 0 ? (missSum / missCount).toFixed(1) : '∞';
+
+        var recent10 = 0;
+        for (var i = 0; i < Math.min(10, posData.length); i++) {
+            if (posData[i] === n) recent10++;
+        }
+
+        var recent30 = 0;
+        for (var i = 0; i < Math.min(30, posData.length); i++) {
+            if (posData[i] === n) recent30++;
+        }
+
+        var streak = 0;
+        for (var i = 0; i < posData.length; i++) {
+            if (posData[i] === n) streak++;
+            else break;
+        }
+
+        var trend = 0;
+        if (posData.length >= 10) {
+            var recent5 = 0, prev5 = 0;
+            for (var i = 0; i < 5; i++) {
+                if (posData[i] === n) recent5++;
+                if (posData[i + 5] === n) prev5++;
+            }
+            trend = recent5 - prev5;
+        }
+
+        var score = 0;
+        score += (recent30 / 30) * 30;
+        var missScore = 0;
+        if (avgMiss !== '∞') {
+            var am = parseFloat(avgMiss);
+            if (miss > am * 1.5) missScore = 25;
+            else if (miss > am) missScore = 15;
+            else if (miss === 0) missScore = 5;
+        }
+        score += missScore;
+        if (trend > 0) score += 15;
+        else if (trend < 0) score -= 10;
+        if (streak >= 2) score -= 15;
+
+        stats.push({
+            digit: n,
+            count: count,
+            miss: miss,
+            maxMiss: maxMiss,
+            avgMiss: avgMiss,
+            recent10: recent10,
+            recent30: recent30,
+            streak: streak,
+            trend: trend,
+            score: Math.max(0, Math.min(100, Math.round(score)))
+        });
+    }
+    stats.sort(function(a, b) { return b.score - a.score; });
+    return stats;
+}
+
+// ===== 5种分析方案 =====
+function s1(d) {
+    var w = Math.min(30, d.length - 1);
+    var r = d.slice(1, 1 + w);
+    var f = {}; for (var i = 0; i <= 9; i++) f[i] = 0;
+    for (var i = 0; i < r.length; i++) f[r[i]]++;
+    var e = []; for (var k in f) e.push([parseInt(k), f[k]]);
+    e.sort(function(a, b) { return b[1] - a[1]; });
+    return e.slice(0, 5).map(function(x) { return x[0]; });
+}
+
+function s2(d) {
+    var g = {}; for (var i = 0; i <= 9; i++) g[i] = 999;
+    for (var i = 1; i < d.length; i++) {
+        var n = d[i];
+        if (g[n] === 999) g[n] = i;
+    }
+    var e = []; for (var k in g) e.push([parseInt(k), g[k]]);
+    e.sort(function(a, b) { return b[1] - a[1]; });
+    return e.slice(0, 5).map(function(x) { return x[0]; });
+}
+
+function s3(d) {
+    var w = Math.min(10, d.length - 1);
+    var r = d.slice(1, 1 + w);
+    var bc = 0, sc = 0;
+    for (var i = 0; i < r.length; i++) {
+        if (r[i] >= 5) bc++; else sc++;
+    }
+    var pb = bc >= sc;
+    var ca = []; for (var i = 0; i <= 9; i++) if ((i >= 5) === pb) ca.push(i);
+    var f = {}; for (var i = 0; i < ca.length; i++) f[ca[i]] = 0;
+    var r2 = d.slice(1, 21);
+    for (var i = 0; i < r2.length; i++) {
+        var n = r2[i];
+        if (ca.indexOf(n) >= 0) f[n]++;
+    }
+    var e = []; for (var k in f) e.push([parseInt(k), f[k]]);
+    e.sort(function(a, b) { return b[1] - a[1]; });
+    var re = e.slice(0, 5).map(function(x) { return x[0]; });
+    if (re.length < 5) {
+        for (var i = 0; i < ca.length; i++) {
+            if (re.indexOf(ca[i]) < 0) re.push(ca[i]);
+            if (re.length >= 5) break;
+        }
+    }
+    return re.slice(0, 5);
+}
+
+function s4(d) {
+    var w = Math.min(15, d.length - 1);
+    var r = d.slice(1, 1 + w);
+    var oc = 0, ec = 0;
+    for (var i = 0; i < r.length; i++) {
+        if (r[i] % 2 === 1) oc++; else ec++;
+    }
+    var po = ec > oc;
+    var ca = []; for (var i = 0; i <= 9; i++) if ((i % 2 === 1) === po) ca.push(i);
+    var g = {}; for (var i = 0; i < ca.length; i++) g[ca[i]] = 999;
+    for (var i = 1; i < d.length; i++) {
+        var n = d[i];
+        if (ca.indexOf(n) >= 0 && g[n] === 999) g[n] = i;
+    }
+    var e = []; for (var k in g) e.push([parseInt(k), g[k]]);
+    e.sort(function(a, b) { return b[1] - a[1]; });
+    var re = e.slice(0, 5).map(function(x) { return x[0]; });
+    if (re.length < 5) {
+        for (var i = 0; i < ca.length; i++) {
+            if (re.indexOf(ca[i]) < 0) re.push(ca[i]);
+            if (re.length >= 5) break;
+        }
+    }
+    return re.slice(0, 5);
+}
+
+function s5(d) {
+    var sc = {}; for (var i = 0; i <= 9; i++) sc[i] = 0;
+    var f = {}; for (var i = 0; i <= 9; i++) f[i] = 0;
+    var r3 = d.slice(1, 31);
+    for (var i = 0; i < r3.length; i++) f[r3[i]]++;
+    var mf = 0; for (var k in f) if (f[k] > mf) mf = f[k];
+    if (mf === 0) mf = 1;
+    for (var i = 0; i <= 9; i++) sc[i] += (f[i] / mf) * 40;
+    var g = {}; for (var i = 0; i <= 9; i++) g[i] = 999;
+    for (var i = 1; i < d.length; i++) {
+        var n = d[i];
+        if (g[n] === 999) g[n] = i;
+    }
+    var mg = 0; for (var k in g) if (g[k] < 999 && g[k] > mg) mg = g[k];
+    if (mg === 0) mg = 1;
+    for (var i = 0; i <= 9; i++) if (g[i] < 999) sc[i] += (g[i] / mg) * 30;
+    var r1 = d.slice(1, 16);
+    var oc = 0, ec = 0;
+    for (var i = 0; i < r1.length; i++) {
+        if (r1[i] % 2 === 1) oc++; else ec++;
+    }
+    var po = ec > oc;
+    for (var i = 0; i <= 9; i++) if ((i % 2 === 1) === po) sc[i] += 30;
+    var e = []; for (var k in sc) e.push([parseInt(k), sc[k]]);
+    e.sort(function(a, b) { return b[1] - a[1]; });
+    return e.slice(0, 5).map(function(x) { return x[0]; });
+}
+
+var SC = [s1, s2, s3, s4, s5];
+
+function bs(pd, sf) {
+    var rs = [];
+    for (var i = 0; i < pd.length - 1; i++) {
+        var fd = pd.slice(i + 1);
+        var pr = sf(fd);
+        var a = pd[i];
+        rs.push(pr.indexOf(a) >= 0 ? 'h' : 'm');
+    }
+    var cp = sf(pd.slice(1));
+    var hc = 0, mc = 0, mhs = 0, mms = 0, th = 0, tm = 0;
+    for (var i = 0; i < rs.length; i++) {
+        if (rs[i] === 'h') {
+            hc++; th++;
+            if (th > mhs) mhs = th;
+            tm = 0;
+        } else {
+            mc++; tm++;
+            if (tm > mms) mms = tm;
+            th = 0;
+        }
+    }
+    var cst = '', csc = 0;
+    for (var i = 0; i < rs.length; i++) {
+        if (i === 0) { cst = rs[i]; csc = 1; }
+        else if (rs[i] === cst) csc++;
+        else break;
+    }
+    return { cp: cp, hc: hc, mc: mc, mhs: mhs, mms: mms, ch: cst === 'h' ? csc : 0, cm: cst === 'm' ? csc : 0, cn: pd[0] };
+}
+
+// ===== 分析主函数 =====
+function doAnalysis(unique) {
+    var posData = [[], [], [], [], []];
+    for (var d = 0; d < unique.length; d++) {
+        for (var j = 0; j < 5; j++) {
+            posData[j].push(unique[d].numbers[j]);
+        }
+    }
+
+    var ar = {};
+    for (var j = 0; j < 5; j++) {
+        ar[j] = [];
+        for (var s = 0; s < 5; s++) {
+            ar[j].push(bs(posData[j], SC[s]));
+        }
+    }
+
+    var allStats = [];
+    for (var j = 0; j < 5; j++) {
+        allStats.push(calcDigitStats(posData[j]));
+    }
+
+    var cur = unique[0];
+    var best = [];
+    for (var j = 0; j < 5; j++) {
+        var bsIdx = 0, mm = 999;
+        for (var s = 0; s < 5; s++) {
+            if (ar[j][s].cm < mm) { mm = ar[j][s].cm; bsIdx = s; }
+        }
+        var r = ar[j][bsIdx];
+        best.push({
+            pos: p[j], pred: r.cp, sc: bsIdx + 1, sn: sn[bsIdx],
+            hc: r.hc, mc: r.mc,
+            hr: r.hc + r.mc > 0 ? (r.hc / (r.hc + r.mc) * 100).toFixed(0) : 0,
+            ch: r.ch, cm: r.cm
+        });
+    }
+
+    return { unique: unique, ar: ar, best: best, cur: cur, allStats: allStats };
+}
+
+// ===== 当天历史记录 =====
+function buildDailyHistory(unique, pos, currentDate) {
+    var html = '';
+    var count = 0;
+    var maxRows = 50;
+    for (var i = 0; i < unique.length - 1 && count < maxRows; i++) {
+        if (unique[i].date !== currentDate) continue;
+        var futureData = [];
+        for (var j = i + 1; j < unique.length; j++) {
+            futureData.push(unique[j].numbers[pos]);
+        }
+        if (futureData.length < 5) continue;
+        var stats = calcDigitStats(futureData);
+        var rec = stats.slice(0, 5).map(function(s) { return s.digit; });
+        var exc = stats.slice(5, 10).map(function(s) { return s.digit; });
+        var actual = unique[i].numbers[pos];
+        var issueShort = unique[i].issue.slice(-3);
+        var recHit = rec.indexOf(actual) >= 0;
+        var excHit = exc.indexOf(actual) >= 0;
+        var recText = recHit ? '中' + actual : '非' + actual;
+        var excText = excHit ? '中' + actual : '非' + actual;
+        var recColor = recHit ? '#4ecdc4' : '#e94560';
+        var excColor = excHit ? '#e94560' : '#4ecdc4';
+        html += '<div class="history-row">';
+        html += '<div class="history-cell" style="color:#888;">' + issueShort + '期</div>';
+        html += '<div class="history-cell" style="color:' + recColor + ';">' + recText + '</div>';
+        html += '<div class="history-cell" style="color:' + excColor + ';">' + excText + '</div>';
+        html += '</div>';
+        count++;
+    }
+    if (count === 0) {
+        html += '<div style="text-align:center;color:#666;padding:10px;font-size:10px;">暂无当天历史记录</div>';
+    }
+    return html;
+}
+
+
+function render() {
+    var app = document.getElementById('app');
+    if (!globalData || globalData.length === 0) {
+        app.innerHTML = '<div class="no-data"><h3>📭 暂无数据</h3><p>请粘贴JSON数据后点击导入</p><textarea id="manualData" placeholder="粘贴从电脑导出的JSON数据..."></textarea><br><button onclick="manualImport()">导入数据并分析</button></div>';
+        return;
+    }
+
+    // 休市检测
+    if (isMarketClosed()) {
+        renderClosed(app);
+        return;
+    }
+
+    var result = doAnalysis(globalData);
+    globalResult = result;
+    var unique = result.unique;
+    var ar = result.ar;
+    var best = result.best;
+    var cur = result.cur;
+    var allStats = result.allStats;
+
+    var html = '';
+
+    // 头部 - 5方案比對改成僅參考
+    html += '<div class="header"><h1>🎯 智能峰值預測</h1><div class="subtitle">' + unique.length + '期數據 | 僅參考 | <span id="countdown" style="color:#4ecdc4;">' + countdownSec + '</span>s後刷新</div></div>';
+
+    // 当前期
+    html += '<div class="current-issue"><div class="issue-info">📌 當期 ' + cur.issue + ' | ' + cur.date + ' ' + cur.time + '</div><div class="numbers-row">';
+    for (var i = 0; i < 5; i++) {
+        html += '<div class="number-ball">' + cur.numbers[i] + '</div>';
+    }
+    html += '</div></div>';
+
+    // 下期预测推荐
+    html += '<div class="prediction-box"><div class="pred-title">🔮 下期預測推薦（綜合峰值）</div><div class="pred-grid">';
+    for (var j = 0; j < 5; j++) {
+        var stats = allStats[j];
+        var top5 = stats.slice(0, 5);
+        var b = best[j];
+        var maxScoreInTop = top5[0].score;
+        var minScoreInTop = top5[4].score;
+
+        html += '<div class="pred-item"><div class="pos-name">' + p[j] + '</div><div class="pred-nums">';
+        for (var ti = 0; ti < top5.length; ti++) {
+            var s = top5[ti];
+            var isHighest = s.score === maxScoreInTop;
+            var isLowest = s.score === minScoreInTop;
+            var borderColor = isHighest ? '#ffe66d' : (isLowest ? '#e94560' : '#555');
+            var borderWidth = isHighest || isLowest ? '2px' : '1px';
+            var bgColor = isHighest ? 'linear-gradient(135deg,#4ecdc4,#3bb3a0)' : (isLowest ? 'linear-gradient(135deg,#e94560,#c73e54)' : '#333');
+            var textColor = isHighest || isLowest ? '#0f0f1a' : '#e0e0e0';
+            var label = isHighest ? '⭐' : (isLowest ? '⚠️' : '');
+
+            html += '<div class="pred-ball" style="background:' + bgColor + ';border:' + borderWidth + ' solid ' + borderColor + ';color:' + textColor + ';">' + s.digit + '<span class="pred-ball-label">' + label + '</span></div>';
+        }
+        html += '</div>';
+        html += '<div class="scheme-name">方案' + b.sc + ' ' + b.sn + '</div>';
+        html += '<div class="scheme-stats"><span style="color:#4ecdc4">中' + b.hc + '</span> / <span style="color:#e94560">非' + b.mc + '</span> ' + b.hr + '%</div>';
+        html += '<div class="score-info"><span style="color:#ffe66d">⭐最高' + top5[0].score + '分</span> | <span style="color:#e94560">⚠️最低' + top5[4].score + '分</span></div>';
+        html += '</div>';
+    }
+    html += '</div></div>';
+
+    // Tab
+    html += '<div class="tabs">';
+    for (var i = 0; i < 5; i++) {
+        html += '<div class="tab ' + (i === activeTab ? 'active' : '') + '" onclick="switchTab(' + i + ')">' + p[i] + '</div>';
+    }
+    html += '</div>';
+
+    // 面板
+    for (var pos = 0; pos < 5; pos++) {
+        html += '<div class="panel ' + (pos === activeTab ? 'active' : '') + '" id="panel-' + pos + '">';
+        var stats = allStats[pos];
+        var r = ar[pos];
+        var top5 = stats.slice(0, 5);
+        var bottom5 = stats.slice(5, 10);
+
+        // 推荐5码 + 排除5码
+        html += '<div class="rank-section">';
+
+        // 推荐区
+        html += '<div class="rank-box rec"><div class="rank-title">✅ 推薦5碼（峰值排序）</div>';
+        for (var rank = 0; rank < 5; rank++) {
+            var s = top5[rank];
+            var isHighest = rank === 0;
+            var isLowest = rank === 4;
+            var label = isHighest ? '⭐最高' : (isLowest ? '⚠️最低' : '');
+            var labelColor = isHighest ? '#ffe66d' : (isLowest ? '#e94560' : '#888');
+            var barColor = isHighest ? '#4ecdc4' : (isLowest ? '#e94560' : '#555');
+
+            html += '<div class="rank-item">';
+            html += '<div class="rank-order" style="color:' + (rank < 3 ? '#4ecdc4' : '#888') + '">' + (rank + 1) + '</div>';
+            html += '<div class="rank-ball" style="background:' + (isHighest ? 'linear-gradient(135deg,#4ecdc4,#3bb3a0)' : (isLowest ? 'linear-gradient(135deg,#e94560,#c73e54)' : '#333')) + ';border:1px solid ' + (isHighest || isLowest ? barColor : '#555') + ';color:' + (isHighest || isLowest ? '#0f0f1a' : '#e0e0e0') + ';">' + s.digit + '</div>';
+            html += '<div class="rank-bar-bg"><div class="rank-bar" style="width:' + s.score + '%;background:' + barColor + ';"></div></div>';
+            html += '<div class="rank-score">' + s.score + '</div>';
+            html += '<div class="rank-mark" style="color:' + labelColor + '">' + label + '</div>';
+            html += '</div>';
+        }
+        html += '</div>';
+
+        // 排除区
+        html += '<div class="rank-box exc"><div class="rank-title">❌ 排除5碼（風險排序）</div>';
+        for (var rank = 0; rank < 5; rank++) {
+            var s = bottom5[rank];
+            var isDanger = rank === 0;
+            var isSafe = rank === 4;
+            var label = isDanger ? '🔥危險' : (isSafe ? '✅安全' : '');
+            var labelColor = isDanger ? '#ffe66d' : (isSafe ? '#4ecdc4' : '#888');
+            var barColor = isDanger ? '#ffe66d' : (isSafe ? '#333' : '#555');
+
+            html += '<div class="rank-item">';
+            html += '<div class="rank-order" style="color:' + (isDanger ? '#ffe66d' : '#888') + '">' + (rank + 6) + '</div>';
+            html += '<div class="rank-ball" style="background:' + (isDanger ? 'linear-gradient(135deg,#ffe66d,#e6c93c)' : '#333') + ';border:1px solid ' + (isDanger ? '#ffe66d' : '#555') + ';color:' + (isDanger ? '#0f0f1a' : '#e0e0e0') + ';">' + s.digit + '</div>';
+            html += '<div class="rank-bar-bg"><div class="rank-bar" style="width:' + s.score + '%;background:' + barColor + ';"></div></div>';
+            html += '<div class="rank-score">' + s.score + '</div>';
+            html += '<div class="rank-mark" style="color:' + labelColor + '">' + label + '</div>';
+            html += '</div>';
+        }
+        html += '</div>';
+
+        html += '</div>';
+
+        // 峰值说明
+        html += '<div class="peak-note">';
+        html += '<span style="color:#ffe66d">⭐</span>=最有把握(最高分) | ';
+        html += '<span style="color:#e94560">⚠️</span>=最勉強(最低分) | ';
+        html += '<span style="color:#ffe66d">🔥</span>=最危險(排除區最高分,可能意外開出) | ';
+        html += '<span style="color:#4ecdc4">✅</span>=最安全(排除區最低分)';
+        html += '</div>';
+
+        // 五方案 + 当天历史 并排
+        html += '<div class="side-by-side">';
+
+        // 左边：五方案（恢复彩色竖线）
+        html += '<div class="schemes-column">';
+        // ===== 五方案回测对比 + 当天历史记录 左右并排 =====
+        html += '<div style="display:flex;gap:8px;align-items:stretch;margin-top:8px;">';
+
+        // 左边：五方案回测对比
+        html += '<div style="flex:1;min-width:0;">';
+        html += '<div style="color:#aaa;font-weight:bold;font-size:11px;margin-bottom:6px;border-top:1px solid #333;padding-top:8px;">🎲 五方案回測對比</div>';
+        for (var s = 0; s < 5; s++) {
+            var rr = r[s];
+            var rate = rr.hc + rr.mc > 0 ? (rr.hc / (rr.hc + rr.mc) * 100).toFixed(1) : 0;
+            html += '<div class="scheme-card" style="border-left-color:' + colors[s] + '">';
+            html += '<div class="scheme-title" style="color:' + colors[s] + '">方案' + (s + 1) + ' ' + schemeNamesFull[s] + '</div>';
+            html += '<div class="scheme-nums"><span>推薦:</span>';
+            for (var i = 0; i < rr.cp.length; i++) {
+                var isHit = rr.cp[i] === rr.cn;
+                html += '<div class="s-ball ' + (isHit ? 'hit' : 'miss') + '">' + rr.cp[i] + '</div>';
+            }
+            html += '</div>';
+            html += '<div class="scheme-stats">';
+            html += '<span>中/非: ' + rr.hc + '/' + rr.mc + '</span>';
+            html += '<span>命中率: ' + rate + '%</span>';
+            html += '<span>連非: ' + rr.cm + '</span>';
+            html += '</div></div>';
+        }
+        html += '</div>';
+
+        // 右边：当天历史记录
+        html += '<div style="flex:1;min-width:0;display:flex;flex-direction:column;">';
+        html += '<div style="color:#ffe66d;font-weight:bold;font-size:11px;margin-bottom:6px;border-top:1px solid #333;padding-top:8px;text-align:center;">📋 ' + p[pos] + '当天历史记录</div>';
+        html += '<div class="history-section">';
+        html += '<div class="history-header">';
+        html += '<div class="history-cell">期号</div>';
+        html += '<div class="history-cell">推荐</div>';
+        html += '<div class="history-cell">排除</div>';
+        html += '</div>';
+        html += buildDailyHistory(unique, pos, cur.date);
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+        // ===== 并排结束 =====
+
+        
+    }
+
+    html += '<div class="status-bar">⚠️ 統計僅供參考，開獎為隨機事件。该链接是个人数据分析 禁止分享与违法行为 涉嫌违规与程序员无关</div>';
+    app.innerHTML = html;
+    startAutoRefresh();
+}
+
+function renderClosed(app) {
+    var html = '';
+    html += '<div class="closed-cover">';
+    html += '<div class="lock-icon">🔒</div>';
+    html += '<h2>休市中</h2>';
+    html += '<div class="closed-time">02:00 - 07:05 為系統維護時段</div>';
+    html += '<div class="countdown-box">';
+    html += '<div class="cd-label">距離開市還有</div>';
+    html += '<div class="cd-time" id="closed-countdown">' + getCountdownToOpen() + '</div>';
+    html += '</div>';
+    html += '<div class="ai-note">';
+    html += '<strong>🤖 AI 說明</strong><br>';
+    html += '本系統基於歷史數據進行統計分析，僅供個人學習研究使用。<br>';
+    html += '彩票開獎為完全隨機事件，任何預測都不能保證中獎。<br>';
+    html += '請理性對待，切勿沉迷。';
+    html += '</div>';
+    html += '</div>';
+    html += '<div id="review-panel-root"></div>';
+    app.innerHTML = html;
+
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(function() {
+        var el = document.getElementById('closed-countdown');
+        if (el) el.textContent = getCountdownToOpen();
+    }, 1000);
+
+    fetchReview();
+}
+
+function manualImport() {
+    var txt = document.getElementById('manualData').value;
+    try {
+        var data = JSON.parse(txt);
+        if (Array.isArray(data)) {
+            globalData = data;
+            render();
+        } else if (data.data && Array.isArray(data.data)) {
+            globalData = data.data;
+            render();
+        } else {
+            alert('数据格式不正确');
+        }
+    } catch (e) {
+        alert('JSON解析失败: ' + e.message);
+    }
+}
+
+// ===== 自动加载 =====
+var API_URL = 'https://taiwan-five-predict.vercel.app/data.json';
+function loadData() {
+    var app = document.getElementById('app');
+    if (!globalData || globalData.length === 0) {
+        app.innerHTML = '<div class="no-data"><h3>⏳ 正在加载数据...</h3><p>从 GitHub 获取最新分析数据</p><div style="margin-top:20px;font-size:30px;">🔄</div></div>';
+    }
+    fetch(API_URL + '?t=' + Date.now(), { cache: 'no-store' })
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+            var arr = Array.isArray(data) ? data : (data.data || []);
+            if (arr.length > 0 && arr[0].issue) {
+                var hasNewData = arr.length !== lastDataLength;
+                globalData = arr;
+                lastDataLength = arr.length;
+                render();
+                if (hasNewData && globalData.length > 0) {
+                    console.log('✅ 已更新到 ' + arr.length + ' 期数据');
+                } else {
+                    console.log('✅ 已加载 ' + arr.length + ' 期数据（无变化）');
+                }
+            } else {
+                throw new Error('数据格式不正确');
+            }
+        })
+        .catch(function(e) {
+            console.error('❌ 加载失败:', e);
+            if (!globalData || globalData.length === 0) {
+                app.innerHTML = '<div class="no-data"><h3>❌ 加载失败</h3><p>' + e.message + '</p><p>请检查网络连接或 data.json 是否存在</p><br><button onclick="loadData()">🔄 重新加载</button><br><br><textarea id="manualData" placeholder="或手动粘贴JSON数据..."></textarea><br><button onclick="manualImport()">导入数据并分析</button></div>';
+            }
+        });
+}
+
+function startAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownSec = 15;
+    updateCountdownDisplay();
+    countdownTimer = setInterval(function() {
+        countdownSec--;
+        updateCountdownDisplay();
+        if (countdownSec <= 0) {
+            countdownSec = 15;
+            loadData();
+        }
+    }, 1000);
+    autoRefreshTimer = setInterval(function() {
+        loadData();
+    }, 15000);
+}
+
+function updateCountdownDisplay() {
+    var el = document.getElementById('countdown');
+    if (el) {
+        el.textContent = countdownSec;
+        el.style.color = countdownSec <= 5 ? '#e94560' : '#4ecdc4';
+    }
+}
+
+loadData();
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) { countdownSec = 15; loadData(); }
+});
+
+// ===== 复盘统计面板 =====
+function fetchReview() {
+    var pp = ['萬位','千位','百位','十位','個位'];
+    var cc = ['#e94560', '#4ecdc4', '#ffe66d', '#a8e6cf', '#ff8b94'];
+    var snf = ['🔥 熱號追蹤', '❄️ 冷號回補', '📈 趨勢跟隨', '⚖️ 奇偶平衡', '🎯 綜合評分'];
+
+    var urls = [
+        './review.json?t=' + Date.now(),
+        '/review.json?t=' + Date.now(),
+        'review.json?t=' + Date.now()
+    ];
+
+    function tryFetch(idx) {
+        if (idx >= urls.length) {
+            var el = document.getElementById('review-panel-root');
+            if (el) el.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">⚠️ 无法加载复盘数据，请确认 review.json 已推送</div>';
+            return;
+        }
+        fetch(urls[idx], { cache: 'no-store' })
+        .then(function(r) { 
+            if (!r.ok) throw new Error('HTTP ' + r.status); 
+            return r.json(); 
+        })
+        .then(function(data) {
+            if (data && data.positions) {
+                renderReview(data, pp, cc, snf);
+            } else {
+                throw new Error('数据格式错误');
+            }
+        })
+        .catch(function(e) {
+            console.log('路径 ' + urls[idx] + ' 失败:', e.message);
+            tryFetch(idx + 1);
+        });
+    }
+    tryFetch(0);
+}
+
+function renderReview(data, pp, cc, snf) {
+    var container = document.getElementById('review-panel-root');
+    if (!container) return;
+
+    function buildHTML(pos) {
+        var d = data.positions[pos];
+        var html = '';
+        html += '<div class="review-panel">';
+        html += '<div class="review-header"><h3>📊 ' + data.date + ' 復盤統計 (' + data.count + '期)</h3></div>';
+        html += '<div class="review-tabs">';
+        for (var i = 0; i < 5; i++) {
+            var active = i === pos;
+            html += '<div class="review-tab ' + (active ? 'active' : '') + '" data-ridx="' + i + '" style="background:' + (active ? 'linear-gradient(135deg,#e94560,#c73e54)' : 'rgba(255,255,255,0.05)') + ';border:1px solid ' + (active ? '#e94560' : '#333') + ';color:' + (active ? 'white' : '#e0e0e0') + ';">' + pp[i] + '</div>';
+        }
+        html += '</div>';
+
+        html += '<div style="background:rgba(78,205,196,0.05);border:1px solid rgba(78,205,196,0.2);border-radius:10px;padding:10px;margin-bottom:10px;">';
+        html += '<div style="color:#4ecdc4;font-weight:bold;font-size:11px;margin-bottom:6px;text-align:center;">🔮 綜合峰值復盤</div>';
+        html += '<div style="display:flex;justify-content:center;gap:12px;text-align:center;">';
+        html += '<div><div style="font-size:9px;color:#4ecdc4;">中</div><div style="font-size:18px;font-weight:bold;color:#4ecdc4;">' + d.composite.hc + '</div></div>';
+        html += '<div><div style="font-size:9px;color:#e94560;">非</div><div style="font-size:18px;font-weight:bold;color:#e94560;">' + d.composite.mc + '</div></div>';
+        html += '<div><div style="font-size:9px;color:#ffe66d;">命中率</div><div style="font-size:18px;font-weight:bold;color:#ffe66d;">' + d.composite.rate + '%</div></div>';
+        html += '</div>';
+        html += '<div style="font-size:9px;color:#aaa;text-align:center;margin-top:4px;">連中' + d.composite.mhs + ' | 連非' + d.composite.mms + '</div>';
+        html += '</div>';
+
+        html += '<div style="display:flex;gap:6px;margin-bottom:10px;">';
+        html += '<div style="flex:1;background:rgba(78,205,196,0.05);border:1px solid rgba(78,205,196,0.2);border-radius:8px;padding:8px;text-align:center;">';
+        html += '<div style="color:#4ecdc4;font-weight:bold;font-size:10px;margin-bottom:4px;">✅ 推薦5碼復盤</div>';
+        html += '<div style="display:flex;justify-content:center;gap:8px;">';
+        html += '<div><div style="font-size:9px;color:#4ecdc4;">中</div><div style="font-size:16px;font-weight:bold;color:#4ecdc4;">' + d.recommend.hc + '</div></div>';
+        html += '<div><div style="font-size:9px;color:#e94560;">非</div><div style="font-size:16px;font-weight:bold;color:#e94560;">' + d.recommend.mc + '</div></div>';
+        html += '</div>';
+        html += '<div style="font-size:9px;color:#aaa;margin-top:2px;">' + d.recommend.rate + '% | 連中' + d.recommend.mhs + ' 連非' + d.recommend.mms + '</div>';
+        html += '</div>';
+        html += '<div style="flex:1;background:rgba(233,69,96,0.05);border:1px solid rgba(233,69,96,0.2);border-radius:8px;padding:8px;text-align:center;">';
+        html += '<div style="color:#e94560;font-weight:bold;font-size:10px;margin-bottom:4px;">❌ 排除5碼復盤</div>';
+        html += '<div style="display:flex;justify-content:center;gap:8px;">';
+        html += '<div><div style="font-size:9px;color:#ffe66d;">中</div><div style="font-size:16px;font-weight:bold;color:#ffe66d;">' + d.exclude.hc + '</div></div>';
+        html += '<div><div style="font-size:9px;color:#888;">非</div><div style="font-size:16px;font-weight:bold;color:#888;">' + d.exclude.mc + '</div></div>';
+        html += '</div>';
+        html += '<div style="font-size:9px;color:#aaa;margin-top:2px;">' + d.exclude.rate + '% | 連中' + d.exclude.mhs + ' 連非' + d.exclude.mms + '</div>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div style="color:#aaa;font-weight:bold;font-size:11px;margin-bottom:6px;border-top:1px solid #333;padding-top:8px;text-align:center;">🎲 五方案復盤對比</div>';
+        for (var s = 0; s < 5; s++) {
+            var ds = d.schemes[s];
+            html += '<div class="scheme-card" style="border-left-color:' + cc[s] + '">';
+            html += '<div style="font-size:11px;font-weight:bold;color:' + cc[s] + ';margin-bottom:4px;">方案' + (s + 1) + ' ' + snf[s] + '</div>';
+            html += '<div style="display:flex;justify-content:center;gap:12px;text-align:center;">';
+            html += '<div><div style="font-size:9px;color:#4ecdc4;">中</div><div style="font-size:14px;font-weight:bold;color:#4ecdc4;">' + ds.hc + '</div></div>';
+            html += '<div><div style="font-size:9px;color:#e94560;">非</div><div style="font-size:14px;font-weight:bold;color:#e94560;">' + ds.mc + '</div></div>';
+            html += '<div><div style="font-size:9px;color:#ffe66d;">命中率</div><div style="font-size:14px;font-weight:bold;color:#ffe66d;">' + ds.rate + '%</div></div>';
+            html += '</div>';
+            html += '<div style="font-size:9px;color:#aaa;text-align:center;margin-top:2px;">連中' + ds.mhs + ' | 連非' + ds.mms + '</div>';
+            html += '</div>';
+        }
+        html += '<div style="font-size:10px;color:#666;text-align:center;margin-top:8px;">⚠️ 統計僅供參考，開獎為隨機事件。该链接是个人数据分析 禁止分享与违法行为 涉嫌违规与程序员无关</div>';
+        html += '</div>';
+        return html;
+    }
+
+    function updatePanel(pos) {
+        container.innerHTML = buildHTML(pos);
+        var tabs = container.querySelectorAll('.review-tab');
+        for (var t = 0; t < tabs.length; t++) {
+            tabs[t].addEventListener('click', function(e) {
+                var idx = parseInt(e.target.getAttribute('data-ridx'));
+                updatePanel(idx);
+            });
+        }
+    }
+
+    updatePanel(0);
+}
+
+setInterval(function() {
+    if (isMarketClosed()) fetchReview();
+}, 60000);
+console.log('📊 智能峰值预测系统已启动');
+</script>
+</body>
+</html>
